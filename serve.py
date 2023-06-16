@@ -1,7 +1,7 @@
 import os
 import subprocess
 import streamlit as st
-
+import sys
 def run_image_processing(file,coco=False):
     # Define your image processing logic here
 
@@ -18,7 +18,8 @@ def run_image_processing(file,coco=False):
         os.makedirs(detectPath)
     filepath = os.path.join(cacheAbsolutePath, file)
     try:
-        subprocess.run(['python', detectorScript, '--source', filepath, '--weights', weights, '--conf', '0.25', '--name', 'detect', '--exist-ok', '--project', cacheAbsolutePath, "--no-trace"])
+        python_executable = sys.executable
+        subprocess.run([python_executable , detectorScript, '--source', filepath, '--weights', weights, '--conf', '0.25', '--name', 'detect', '--exist-ok', '--project', cacheAbsolutePath, "--no-trace"])
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while running the subprocess: {e}")
     except Exception as e:
