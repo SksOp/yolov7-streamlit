@@ -43,4 +43,6 @@ thop  # FLOPs computation
 chardet
 flask
 flask-cors
+streamlit==1.3.0
+streamlit-webrtc==0.32.0
 # cv2
