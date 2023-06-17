@@ -3,8 +3,6 @@ import subprocess
 import streamlit as st
 import sys
 from PIL import Image
-import io
-import avif
 import pandas as pd
 import matplotlib.pyplot as plt
 
