@@ -67,13 +67,7 @@ def resize_image(image_path, max_width):
     # Save the resized image
     resized_image.save(image_path)
 
-banner_image_path = "/banner.png"  
 
-top_banner_html = """
-    <div class="banner_holder">
-    <img src="https://res.cloudinary.com/dbz9wkcqz/image/upload/v1687020196/Frame_1_gdyqhl.png" >
-    </div>
-    """
 
 def load_model_visualizer():
     st.subheader("Model visualization")
@@ -95,7 +89,7 @@ def process_uploaded_image(uploaded_file,coco=False):
     with open(savePath, "wb") as f:
         f.write(uploaded_file.getbuffer())
     
-    resize_image(savePath, 640)
+    resize_image(savePath, 1000)
 
     run_image_processing(fileName,coco=coco)
 
@@ -115,17 +109,25 @@ def uploadPic(coco=False):
     if st.button("Process Image",key=f"buton@fileUplaod{coco}") and uploaded_file is not None:
         # saving this file to a temporary location
         process_uploaded_image(uploaded_file,coco=coco)
-def takePic():
-    takenPic = st.camera_input("Take a picture")
+def takePic(coco=False):
+    takenPic = st.camera_input("Take a picture",key=f"camera{coco}")
     if takenPic is not None:
-        process_uploaded_image(takenPic)
+        process_uploaded_image(takenPic,coco=coco)
 
 def load_coco_dataset():
     st.caption("You can run the model with the weights trained on the coco dataset. ")
     st.markdown("To know more about the coco dataset, click [here](https://cocodataset.org/#home)") 
-    uploadPic(coco=True)    
+    dropdownContainer , dumb ,dumb= st.columns(3)
+    with dropdownContainer:
+        st.subheader("Try it !")
+        dropdown= st.selectbox('Uplaod / Take picture ', ['Upload', 'Take Picture'] ,key=f"dropdown for coco" )
+    if dropdown == 'Upload':
+        uploadPic(coco=True)
+    else:
+        takePic(coco=True)    
 
 def load_custom_dataset():
+
     st.caption("The associated classes are: ")
     class1, class2, class3, class4, class5,dumb,dumb = st.columns(7)
     with class1:
@@ -142,7 +144,7 @@ def load_custom_dataset():
     dropdownContainer , dumb ,dumb= st.columns(3)
     with dropdownContainer:
         st.subheader("Try it !")
-        dropdown= st.selectbox('Uplaod / Take picture ', ['Upload', 'Take Picture'])
+        dropdown= st.selectbox('Uplaod / Take picture ', ['Upload', 'Take Picture'],key=f"dropdown for dropdown")
     if dropdown == 'Upload':
         uploadPic()
     else:
@@ -176,7 +178,15 @@ def load_info():
     # Dataset section
     st.markdown("#### The Dataset")
     st.markdown("The dataset consists of 442 images based on the above-mentioned classes. To get the dataset, click [here](https://www.kaggle.com/datasets/sksop47/pc-setup-detector-dataset).")
-
+    data = {
+    'Class': ['Phone/Tablet', 'Laptop', 'TV/Monitor', 'Keyboard', 'Mouse'],
+    'Training': [155, 229, 129, 90, 64],
+        'Validation': [17, 33, 10, 7, 8]
+    }
+    df = pd.DataFrame(data)
+    table , dumb = st.columns(2)
+    with table:
+        st.table(df)
     # Performance section
     st.markdown("#### Performance")
     st.markdown("##### Loss")
@@ -250,16 +260,25 @@ def load_Details():
     st.markdown("### Wandb")
     st.markdown("To see the wandb report, click [here](https://api.wandb.ai/links/shubhaman47/s34r4k4n)")
 
-def main():
-
+def load_heading():
+    top_banner_html = """
+        <div class="banner_holder">
+        <img src="https://res.cloudinary.com/dbz9wkcqz/image/upload/v1687020196/Frame_1_gdyqhl.png" >
+        </div>
+    """
     css = os.path.join(os.getcwd(), "style.css")
     with open(css) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
     
     st.markdown(top_banner_html, unsafe_allow_html=True)
     st.title("Object detection APP")
-    tab0, tab1, tab2, tab3 , tab4= st.tabs(["Introduction","Try on our weights", "Coco class" , "Explore Model","Details"])
 
+
+def main():
+
+    load_heading()
+    tab0, tab1, tab2, tab3 , tab4= st.tabs(["Introduction","Try on our weights", "Coco class" , "Explore Model","Details"])
+    
     with tab0:
         load_info()
     with tab1:
